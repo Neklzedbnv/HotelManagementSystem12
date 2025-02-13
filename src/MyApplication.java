@@ -5,6 +5,7 @@ import factories.ControllerFactory;
 import models.*;
 import repositories.*;
 
+import Money.*;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -76,6 +77,8 @@ public class MyApplication {
         }
     }
 
+    
+
     public void loginSystem() {
         System.out.println("\n=== Login System ===");
         System.out.print("Enter email or username: ");
@@ -129,7 +132,7 @@ public class MyApplication {
             }
         }
     }
-    private void showRooms() {
+    public void showRooms() {
         System.out.println("\n=== All Rooms ===");
         List<Room> rooms = roomController.getAllRoomsList();
         if (rooms.isEmpty()) {
@@ -151,11 +154,49 @@ public class MyApplication {
         System.out.print("Enter check-out date (YYYY-MM-DD): ");
         String checkOut = scanner.nextLine();
 
-        Booking booking = new Booking(currentCustomer.getId(), roomId, checkIn, checkOut, "booked", null);
+
+        double price = roomController.getRoomPriceById(roomId);
+        String createdAt = java.time.LocalDateTime.now().toString();
+        Booking booking = new Booking(currentCustomer.getId(), roomId, checkIn, checkOut, "booked", null,price);
         String response = bookingController.createBooking(booking);
 
         if (response.contains("successfully")) {
-            System.out.println("Booking confirmed! Please make a payment at our reseption using your Booking ID, which you can find in 'View My Bookings");
+            System.out.println("Booking confirmed! Choose payment method:");
+            System.out.println("1. Cash Payment");
+            System.out.println("2. Credit Card Payment");
+            System.out.println("3. Kaspi Bank Payment");
+            System.out.print("Select payment type: ");
+            int paymentChoice = scanner.nextInt();
+            scanner.nextLine();
+
+            Payment payment = null;
+            switch (paymentChoice) {
+                case 1 -> {
+                    System.out.print("Enter recipient name: ");
+                    String receivedBy = scanner.nextLine();
+                    payment = new CashPayment(0, booking.getId(), booking.getPrice(), "Pending", "", receivedBy);
+                }
+                case 2 -> {
+                    System.out.print("Enter card number: ");
+                    String cardNumber = scanner.nextLine();
+                    System.out.print("Enter cardholder name: ");
+                    String cardHolderName = scanner.nextLine();
+                    System.out.print("Enter expiry date (MM/YY): ");
+                    String expiryDate = scanner.nextLine();
+                    payment = new CreditCardPayment(0, booking.getId(), booking.getPrice(), "Pending", "", cardNumber, cardHolderName, expiryDate);
+                }
+                case 3 -> {
+                    System.out.print("Enter Kaspi account number: ");
+                    String kaspiAccount = scanner.nextLine();
+                    payment = new KaspiBankPayment(0, booking.getId(), booking.getPrice(), "Pending", "", kaspiAccount);
+                }
+                default -> System.out.println("Invalid payment option! Booking remains unpaid.");
+            }
+
+            if (payment != null) {
+                String paymentResponse = paymentController.createPayment(payment);
+                System.out.println(paymentResponse);
+            }
         } else {
             System.out.println("Booking failed! Try again.");
         }
@@ -199,7 +240,6 @@ public class MyApplication {
             System.out.println("1. View all bookings");
             System.out.println("2. Cancel a booking");
             System.out.println("3. View all rooms");
-            System.out.println("4. Add a new room");
             System.out.println("0. Logout");
             System.out.print("Choose an option: ");
 

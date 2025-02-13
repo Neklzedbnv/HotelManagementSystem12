@@ -8,21 +8,23 @@ public class Booking {
     private String checkOutDate;
     private String status;
     private String createdAt;
+    private double price;
 
-    // Конструкторы
+
     public Booking() {}
 
-    public Booking(int customerId, int roomId, String checkInDate, String checkOutDate, String status, String createdAt) {
+    public Booking(int customerId, int roomId, String checkInDate, String checkOutDate, String status, String createdAt, double price) {
         this.customerId = customerId;
         this.roomId = roomId;
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
         this.status = status;
         this.createdAt = createdAt;
+        this.price = price;
     }
 
-    public Booking(int id, int customerId, int roomId, String checkInDate, String checkOutDate, String status, String createdAt) {
-        this(customerId, roomId, checkInDate, checkOutDate, status, createdAt);
+    public Booking(int id, int customerId, int roomId, String checkInDate, String checkOutDate, String status, String createdAt, double price) {
+        this(customerId, roomId, checkInDate, checkOutDate, status, createdAt, price);
         this.id = id;
     }
 
@@ -79,6 +81,14 @@ public class Booking {
         this.createdAt = createdAt;
     }
 
+    public double getPrice(){
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
     @Override
     public String toString() {
         return "Booking{" +
@@ -89,6 +99,7 @@ public class Booking {
                 ", checkOutDate='" + checkOutDate + '\'' +
                 ", status='" + status + '\'' +
                 ", createdAt='" + createdAt + '\'' +
+                ", price=" + price +
                 '}';
     }
 }

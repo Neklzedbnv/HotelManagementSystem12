@@ -24,13 +24,14 @@ public class BookingRepository implements IBookingRepository {
         }
 
         try {
-            String sql = "INSERT INTO bookings (customer_id, room_id, check_in_date, check_out_date, status) VALUES (?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO bookings (customer_id, room_id, check_in_date, check_out_date, status, price) VALUES (?, ?, ?, ?, ?, ?)";
             PreparedStatement st = conn.prepareStatement(sql);
             st.setInt(1, booking.getCustomerId());
             st.setInt(2, booking.getRoomId());
             st.setDate(3, java.sql.Date.valueOf(booking.getCheckInDate()));
             st.setDate(4, java.sql.Date.valueOf(booking.getCheckOutDate()));
             st.setString(5, "booked");
+            st.setDouble(6, booking.getPrice());
 
             st.executeUpdate();
             return true;
@@ -57,8 +58,10 @@ public class BookingRepository implements IBookingRepository {
                         rs.getString("check_in_date"),
                         rs.getString("check_out_date"),
                         rs.getString("status"),
-                        rs.getString("created_at")
+                        rs.getString("created_at"),
+                        rs.getDouble("price")
                 );
+
             }
         } catch (SQLException e) {
             System.out.println("SQL Error: " + e.getMessage());
@@ -81,7 +84,8 @@ public class BookingRepository implements IBookingRepository {
                         rs.getString("check_in_date"),
                         rs.getString("check_out_date"),
                         rs.getString("status"),
-                        rs.getString("created_at")
+                        rs.getString("created_at"),
+                        rs.getDouble("price")
                 ));
             }
         } catch (SQLException e) {
@@ -139,10 +143,11 @@ public class BookingRepository implements IBookingRepository {
         }
     }
 
+
     @Override
     public List<Booking> getBookingsByCustomerId(int customerId) {
         List<Booking> bookings = new ArrayList<>();
-        String sql = "SELECT * FROM bookings WHERE customer_id = ?";
+        String sql = "SELECT id, customer_id, room_id, check_in_date, check_out_date, status, created_at, price FROM bookings WHERE customer_id = ?";
         try (Connection conn = db.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, customerId);
@@ -155,7 +160,8 @@ public class BookingRepository implements IBookingRepository {
                         rs.getString("check_in_date"),
                         rs.getString("check_out_date"),
                         rs.getString("status"),
-                        null
+                        rs.getString("created_at"),
+                        rs.getDouble("price")
                 ));
             }
         } catch (SQLException e) {

@@ -20,6 +20,12 @@ public class PaymentController implements IPaymentController {
     }
 
     @Override
+    public String createPayment(Payment payment) {
+        boolean created = repository.createPayment(payment);
+        return created ? "Payment successfully created!" : "Failed to create payment. Check booking details.";
+    }
+
+    @Override
     public String getPaymentById(int id) {
         Payment payment = repository.getPaymentById(id);
         return payment != null ? payment.toString() : "Payment not found.";

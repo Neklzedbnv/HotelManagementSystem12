@@ -56,6 +56,21 @@ public class RoomRepository implements IRoomRepository {
         return null;
     }
 
+    public double getRoomPriceById(int roomId) {
+        try (Connection conn = db.getConnection()) {
+            String sql = "SELECT price FROM rooms WHERE id = ?";
+            PreparedStatement st = conn.prepareStatement(sql);
+            st.setInt(1, roomId);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                return rs.getDouble("price");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0.0; // Если комната не найдена, возвращаем 0
+    }
+
     @Override
     public List<Room> getAllRooms() {
         List<Room> rooms = new ArrayList<>();

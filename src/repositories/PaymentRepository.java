@@ -18,7 +18,6 @@ public class PaymentRepository implements IPaymentRepository {
     @Override
     public boolean createPayment(int bookingId) {
         try (Connection conn = db.getConnection()) {
-            // 1. Получаем данные о бронировании и цене номера
             String bookingQuery = "SELECT b.check_in_date, b.check_out_date, r.price " +
                     "FROM bookings b " +
                     "JOIN rooms r ON b.room_id = r.id " +
@@ -32,22 +31,20 @@ public class PaymentRepository implements IPaymentRepository {
                 return false;
             }
 
-            // 2. Рассчитываем количество дней проживания
             Date checkIn = rs.getDate("check_in_date");
             Date checkOut = rs.getDate("check_out_date");
             double pricePerDay = rs.getDouble("price");
 
             long diff = checkOut.getTime() - checkIn.getTime();
-            int days = (int) (diff / (1000 * 60 * 60 * 24)); // Переводим миллисекунды в дни
+            int days = (int) (diff / (1000 * 60 * 60 * 24));
             double totalAmount = pricePerDay * days;
 
-            // 3. Создаем платеж с рассчитанной суммой
             String sql = "INSERT INTO payments (booking_id, amount, payment_method, status) VALUES (?, ?, ?, ?)";
             PreparedStatement st = conn.prepareStatement(sql);
             st.setInt(1, bookingId);
             st.setDouble(2, totalAmount);
-            st.setString(3, "pending"); // Метод оплаты указывается позже
-            st.setString(4, "pending"); // Платеж ожидает оплаты
+            st.setString(3, "pending");
+            st.setString(4, "pending");
             st.execute();
 
             return true;
@@ -56,6 +53,26 @@ public class PaymentRepository implements IPaymentRepository {
             return false;
         }
     }
+
+    @Override
+    public boolean createPayment(Payment payment) {
+        try (Connection conn = db.getConnection()) {
+            String sql = "INSERT INTO payments (booking_id, amount, payment_method, status, created_at) VALUES (?, ?, ?, ?, ?)";
+            PreparedStatement st = conn.prepareStatement(sql);
+            st.setInt(1, payment.getBookingId());
+            st.setDouble(2, payment.getAmount());
+            st.setString(3, payment.getPaymentMethod());
+            st.setString(4, payment.getStatus());
+            st.setString(5, payment.getCreatedAt());
+
+            int rowsInserted = st.executeUpdate();
+            return rowsInserted > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 
     @Override
     public Payment getPaymentById(int id) {

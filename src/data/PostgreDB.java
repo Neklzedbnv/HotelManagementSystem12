@@ -8,9 +8,9 @@ import java.sql.SQLException;
 public class PostgreDB implements IDB {
     private static PostgreDB instance;
     private Connection connection;
-    private final String url = "jdbc:postgresql://localhost/DBManagementSystem";
+    private final String url = "jdbc:postgresql://localhost/postgres";
     private final String user = "postgres";
-    private final String password = "1234";
+    private final String password = "26120331de";
 
     private PostgreDB() {
         connect();

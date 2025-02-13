@@ -8,6 +8,7 @@ public interface IRoomRepository {
     Room getRoomById(int id);
     List<Room> getAllRooms();
     boolean updateRoomStatus(int id, String newStatus);
+    double getRoomPriceById(int roomId);
 
     // ДОбавляем метод поиска свободных комнат
     List<Room> findAvailableRooms(String checkIn, String checkOut, double maxPrice);

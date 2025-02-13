@@ -42,4 +42,9 @@ public class RoomController implements IRoomController {
     public List<Room> getAllRoomsList() {
         return repository.getAllRooms();
     }
+
+
+    public double getRoomPriceById(int roomId) {
+        return repository.getRoomPriceById(roomId); // Метод в `RoomRepository`
+    }
 }

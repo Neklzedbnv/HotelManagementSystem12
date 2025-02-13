@@ -8,6 +8,7 @@ public class Payment {
     private String status;
     private String createdAt;
 
+
     // Конструкторы
     public Payment() {}
 
@@ -18,6 +19,8 @@ public class Payment {
         this.status = status;
         this.createdAt = createdAt;
     }
+
+
 
     public Payment(int id, int bookingId, double amount, String paymentMethod, String status, String createdAt) {
         this(bookingId, amount, paymentMethod, status, createdAt);
@@ -68,6 +71,9 @@ public class Payment {
     public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
     }
+
+
+
 
     @Override
     public String toString() {
